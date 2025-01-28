@@ -1,5 +1,29 @@
 #!/bin/bash
 
+# Example usage:
+# LAST_VALID_MODIFIED_DATE="2024-12-01"
+# DIRECTORIES_TO_SCAN=("dir1" "dir2" "dir3")
+
+# Ensure LAST_VALID_MODIFIED_DATE and DIRECTORIES_TO_SCAN are set
+if [[ -z "$LAST_VALID_MODIFIED_DATE" || ${#DIRECTORIES_TO_SCAN[@]} -eq 0 ]]; then
+  echo "LAST_VALID_MODIFIED_DATE or DIRECTORIES_TO_SCAN is not set."
+  exit 1
+fi
+
+# Convert LAST_VALID_MODIFIED_DATE to the timestamp format
+MODIFIED_DATE_TIMESTAMP=$(date -d "$LAST_VALID_MODIFIED_DATE" +%s)
+
+# Create the output file
+OUTPUT_FILE="/tmp/files_modified_after_date.txt"
+> "$OUTPUT_FILE"  # Clear the file if it already exists
+
+# Use find to check modification time and write full paths to the output file
+for dir in "${DIRECTORIES_TO_SCAN[@]}"; do
+  find "$dir" -type f -newermt "$LAST_VALID_MODIFIED_DATE" >> "$OUTPUT_FILE" 2>/dev/null
+done
+
+echo "Files modified after $LAST_VALID_MODIFIED_DATE have been listed in $OUTPUT_FILE."
+
 # Ensure required variables are set
 if [[ -z "$LAST_VALID_MODIFIED_DATE" || -z "$OUTPUT_FILE" || ${#ZIPPABLE_FILE_TYPES[@]} -eq 0 || ${#NON_ZIPPABLE_FILE_TYPES[@]} -eq 0 ]]; then
   echo "Required variables (LAST_VALID_MODIFIED_DATE, OUTPUT_FILE, ZIPPABLE_FILE_TYPES, NON_ZIPPABLE_FILE_TYPES) are not set."
