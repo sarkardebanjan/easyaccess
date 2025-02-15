@@ -1,0 +1,130 @@
+To check whether your JndiObjectFactoryBean is correctly resolving to a jakarta.jms.ConnectionFactory, follow these approaches:
+
+
+---
+
+1. Log the Resolved Bean at Runtime
+
+Since JndiObjectFactoryBean is a factory bean, it doesn’t directly return the ConnectionFactory—you need to check what it resolves to.
+
+Modify Your Configuration to Print the Resolved Bean:
+
+import org.springframework.jndi.JndiObjectFactoryBean;
+import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.jms.ConnectionFactory;
+
+@Component
+public class JndiLookupChecker {
+
+    private final JndiObjectFactoryBean jndiObjectFactoryBean;
+
+    public JndiLookupChecker(JndiObjectFactoryBean jndiObjectFactoryBean) {
+        this.jndiObjectFactoryBean = jndiObjectFactoryBean;
+    }
+
+    @PostConstruct
+    public void checkJndiResolution() throws Exception {
+        Object resolvedObject = jndiObjectFactoryBean.getObject();
+        System.out.println("INFO: JNDI Lookup Result: " + resolvedObject);
+
+        if (resolvedObject instanceof ConnectionFactory) {
+            System.out.println("✅ Resolved JNDI Object is a jakarta.jms.ConnectionFactory");
+        } else {
+            System.out.println("❌ Resolved JNDI Object is NOT a jakarta.jms.ConnectionFactory. It is: " + resolvedObject.getClass());
+        }
+    }
+}
+
+Expected Output (If Successful)
+
+INFO: JNDI Lookup Result: com.some.vendor.jms.SomeJmsConnectionFactory@1a2b3c4d
+✅ Resolved JNDI Object is a jakarta.jms.ConnectionFactory
+
+If the resolved object isn’t a ConnectionFactory, the log will tell you what type it is.
+
+
+---
+
+2. Use Spring Boot’s ApplicationContext to Inspect Beans
+
+Another way to check is by listing all beans of type jakarta.jms.ConnectionFactory:
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.jms.ConnectionFactory;
+import java.util.Map;
+
+@Component
+public class JmsBeanInspector {
+
+    private final ApplicationContext context;
+
+    public JmsBeanInspector(ApplicationContext context) {
+        this.context = context;
+    }
+
+    @PostConstruct
+    public void listJmsConnectionFactories() {
+        Map<String, ConnectionFactory> beans = context.getBeansOfType(ConnectionFactory.class);
+        
+        if (beans.isEmpty()) {
+            System.out.println("❌ No jakarta.jms.ConnectionFactory beans found!");
+        } else {
+            System.out.println("✅ Found ConnectionFactory beans:");
+            beans.forEach((name, bean) -> 
+                System.out.println(" - Bean Name: " + name + ", Type: " + bean.getClass()));
+        }
+    }
+}
+
+Expected Output (If Successful)
+
+✅ Found ConnectionFactory beans:
+ - Bean Name: solaceConnectionFactory, Type: com.some.vendor.jms.SomeJmsConnectionFactory
+ - Bean Name: solaceCachedConnectionFactory, Type: org.springframework.jms.connection.CachingConnectionFactory
+
+
+---
+
+3. Manually Fetch the JNDI Object
+
+If you want to confirm the JNDI lookup outside Spring, you can use InitialContext:
+
+import jakarta.jms.ConnectionFactory;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+public class JndiManualLookup {
+
+    public static void main(String[] args) {
+        try {
+            InitialContext ctx = new InitialContext();
+            Object obj = ctx.lookup("java:comp/env/jms/MyConnectionFactory");
+            
+            System.out.println("JNDI Lookup Result: " + obj);
+
+            if (obj instanceof ConnectionFactory) {
+                System.out.println("✅ JNDI object is a jakarta.jms.ConnectionFactory");
+            } else {
+                System.out.println("❌ JNDI object is NOT a ConnectionFactory. It is: " + obj.getClass());
+            }
+
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+Replace "java:comp/env/jms/MyConnectionFactory" with your actual JNDI name.
+
+
+---
+
+Key Takeaways
+
+Would you like help debugging based on your results?
+
