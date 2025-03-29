@@ -1,0 +1,50 @@
+{
+  "refId" : "PTP12345678",
+  "tradeBase" : {
+    "refId" : "PTP12345678",
+    "sourceId" : "TPW12345678",
+    "source" : "TPW",
+    "tradeDate" : "2025-04-01",
+    "settleDate" : "2023-04-30",
+    "tradeType" : "EQ",
+    "price" : "100.50",
+    "quantity" : "10",
+    "lastAction" : "N",
+    "errorLogSet" : [ {
+      "errorId" : 1234,
+      "errorCode" : "RNDM_ERROR",
+      "errorDesc" : "Random Error",
+      "addDate" : 1743244292831,
+      "errorStatus" : 3
+    } ]
+  },
+  "errorLog" : {
+    "errorId" : 1234,
+    "errorCode" : "RNDM_ERROR",
+    "errorDesc" : "Random Error",
+    "addDate" : 1743244292831,
+    "errorStatus" : 3
+  },
+  "tradeLeg" : {
+    "refId" : "PTP12345678",
+    "legType" : "CT",
+    "addDate" : 1743244292833,
+    "statusCode" : 50,
+    "statusText" : "Trade Confirmed",
+    "responseGenerated" : "Y",
+    "tradeType" : "CT",
+    "secType" : "EQ"
+  },
+  "tradeBaseStage" : {
+    "refId" : "PTP12345678",
+    "sourceId" : "TPW12345678",
+    "source" : "TPW",
+    "tradeDate" : "2025-04-01",
+    "settleDate" : "2023-04-30",
+    "tradeType" : "EQ",
+    "price" : "100.50",
+    "quantity" : "10",
+    "lastAction" : "N",
+    "version" : "1"
+  }
+}
