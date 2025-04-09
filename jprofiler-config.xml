@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.ej-technologies.com/jprofiler/config/11.0">
+  <profilingSettings>
+    <cpuProfiling enabled="true">
+      <recordingSettings>
+        <sampling enabled="true" period="10" />
+        <callTree enabled="true" />
+        <hotSpots enabled="true" />
+      </recordingSettings>
+    </cpuProfiling>
+    <memoryProfiling enabled="true" />
+  </profilingSettings>
+
+  <triggers>
+    <!-- Snapshot after 5 minutes -->
+    <trigger enabled="true">
+      <name>Snapshot after 5 min</name>
+      <event>
+        <jvmStartup delay="300000" />
+      </event>
+      <action>
+        <takeSnapshot type="heap,cpu" />
+      </action>
+    </trigger>
+
+    <!-- Repeat every 5 minutes -->
+    <trigger enabled="true">
+      <name>Repeat snapshot every 5 min</name>
+      <event>
+        <periodic interval="300000" />
+      </event>
+      <action>
+        <takeSnapshot type="heap,cpu" />
+      </action>
+    </trigger>
+  </triggers>
+
+  <!-- Take snapshot when JVM exits -->
+  <sessionSettings>
+    <saveSnapshotOnExit enabled="true" />
+  </sessionSettings>
+</config>
