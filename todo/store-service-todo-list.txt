@@ -1,6 +1,0 @@
-TO-DO Items:
-
-1. Externalize spring boot properties using EnvironmentPostProcessor so they load early and are available for spring boot autoconfiguration. -- 1PTP-sth-config (conditional bean)
-2. Create @ReadOnly DTOs for all tables -- 1PTP-sth-model
-3. Use EntityGraph to load the data
-4. Add other table data into the json
